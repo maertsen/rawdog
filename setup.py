@@ -4,11 +4,11 @@ from distutils.core import setup
 import sys
 
 if sys.version_info < (2, 7) or sys.version_info >= (3,):
-	print("rawdog requires Python 2.7 or later, and not Python 3.")
+	print("rawdog requires Python 2.7 or later.")
 	sys.exit(1)
 
 setup(name="rawdog",
-	version="2.24rc1",
+	version="3.0rc1",
 	description="RSS Aggregator Without Delusions Of Grandeur",
 	author="Adam Sampson",
 	author_email="ats@offog.org",
@@ -21,6 +21,6 @@ setup(name="rawdog",
 		"Environment :: Console",
 		"License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
 		"Operating System :: POSIX",
-		"Programming Language :: Python :: 2",
+		"Programming Language :: Python :: 3",
 		"Topic :: Internet :: WWW/HTTP",
 	])

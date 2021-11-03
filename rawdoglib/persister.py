@@ -1,5 +1,6 @@
 # persister: persist Python objects safely to pickle files
 # Copyright 2003, 2004, 2005, 2013, 2014 Adam Sampson <ats@offog.org>
+# Copyright 2021 Maarten Aertsen <spam-github@rtsn.nl>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,13 +17,16 @@
 
 from __future__ import print_function
 
-import cPickle as pickle
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
+import pickle as pickle
 import errno
 import fcntl
 import os
 import sys
 
-class Persistable:
+class Persistable(object):
 	"""An object which can be persisted."""
 
 	def __init__(self):
@@ -35,7 +39,7 @@ class Persistable:
 	def is_modified(self):
 		return self._modified
 
-class Persisted:
+class Persisted(object):
 	"""Context manager for a persistent object.  The object being persisted
 	must implement the Persistable interface."""
 
@@ -56,7 +60,7 @@ class Persisted:
 			try:
 				os.rename(self.filename + ext,
 				          new_filename + ext)
-			except OSError, e:
+			except OSError as e:
 				# If the file doesn't exist (yet),
 				# that's OK.
 				if e.errno != errno.ENOENT:
@@ -109,7 +113,7 @@ class Persisted:
 			if no_block:
 				mode |= fcntl.LOCK_NB
 			fcntl.lockf(self.lock_file.fileno(), mode)
-		except IOError, e:
+		except IOError as e:
 			if no_block and e.errno in (errno.EACCES, errno.EAGAIN):
 				return False
 			raise e
@@ -146,7 +150,7 @@ class Persisted:
 		if self.object.is_modified():
 			self.persister.log("Saving state file: ", self.filename)
 			newname = "%s.new-%d" % (self.filename, os.getpid())
-			newfile = open(newname, "w")
+			newfile = open(newname, "wb")
 			pickle.dump(self.object, newfile, pickle.HIGHEST_PROTOCOL)
 			newfile.close()
 			os.rename(newname, self.filename)
@@ -155,7 +159,7 @@ class Persisted:
 			self.lock_file.close()
 		self.persister._remove(self.filename)
 
-class Persister:
+class Persister(object):
 	"""Manage the collection of persisted files."""
 
 	def __init__(self, config):

@@ -9,13 +9,14 @@ It finds links to feeds within the following elements:
 
 It orders feeds using a quality heuristic: the first result is the most
 likely to be a feed for the given URL.
-
-Required: Python 2.4 or later, feedparser
 """
 
+from future import standard_library
+standard_library.install_aliases()
 __license__ = """
 Copyright (c) 2008 Decklin Foster <decklin@red-bean.com>
 Copyright (c) 2013, 2015, 2021 Adam Sampson <ats@offog.org>
+Copyright (c) 2021 Maarten Aertsen <spam-github@rtsn.nl>
 
 Permission to use, copy, modify, and/or distribute this software for
 any purpose with or without fee is hereby granted, provided that
@@ -32,13 +33,13 @@ TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 """
 
-import cStringIO
+import io
 import feedparser
 import gzip
 import re
-import urllib2
-import urlparse
-import HTMLParser
+import urllib.request, urllib.error, urllib.parse
+import urllib.parse
+import html.parser
 
 HTTP_AGENT = "feedscanner/1.0"
 
@@ -54,11 +55,11 @@ def is_feed(url, agent=HTTP_AGENT):
 def fetch_url(url, agent=HTTP_AGENT):
     """Fetch the given URL and return the data from it as a Unicode string."""
 
-    request = urllib2.Request(url)
+    request = urllib.request.Request(url)
     request.add_header("User-Agent", agent)
     request.add_header("Accept-Encoding", "gzip")
 
-    f = urllib2.urlopen(request)
+    f = urllib.request.urlopen(request)
     headers = f.info()
     data = f.read()
     f.close()
@@ -68,7 +69,7 @@ def fetch_url(url, agent=HTTP_AGENT):
     encodings = headers.get("Content-Encoding", "")
     encodings = [s.strip() for s in encodings.split(",")]
     if "gzip" in encodings:
-        f = gzip.GzipFile(fileobj=cStringIO.StringIO(data))
+        f = gzip.GzipFile(fileobj=io.StringIO(data))
         data = f.read()
         f.close()
 
@@ -78,15 +79,15 @@ def fetch_url(url, agent=HTTP_AGENT):
 
     return data
 
-class FeedFinder(HTMLParser.HTMLParser):
+class FeedFinder(html.parser.HTMLParser):
     def __init__(self, base_uri):
-        HTMLParser.HTMLParser.__init__(self)
+        html.parser.HTMLParser.__init__(self)
         self.found = []
         self.count = 0
         self.base_uri = base_uri
 
     def add(self, score, href):
-        url = urlparse.urljoin(self.base_uri, href)
+        url = urllib.parse.urljoin(self.base_uri, href)
         lower = url.lower()
 
         # Some sites provide feeds both for entries and comments;
@@ -133,7 +134,7 @@ def feeds(page_url, agent=HTTP_AGENT):
     parser = FeedFinder(page_url)
     try:
         parser.feed(data)
-    except HTMLParser.HTMLParseError:
+    except html.parser.HTMLParseError:
         pass
     found = parser.urls()
 

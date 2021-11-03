@@ -1,4 +1,7 @@
-rawdog: RSS Aggregator Without Delusions Of Grandeur
+This is an attempt at a port to Python 3 for my personal use. Upstream can be
+found at https://offog.org/code/rawdog/. --Maarten
+
+# rawdog: RSS Aggregator Without Delusions Of Grandeur
 Adam Sampson <ats@offog.org>
 
 rawdog is a feed aggregator, capable of producing a personal "river of
@@ -12,8 +15,8 @@ behaviour is highly customisable using plugins written in Python.
 
 rawdog has the following dependencies:
 
-- Python 2.7 or later (but not Python 3)
-- feedparser 5.1.2 or later
+- Python 3.6 or later
+- feedparser 6.0.0 or later
 - PyTidyLib 0.2.1 or later (optional but strongly recommended)
 
 To install rawdog on your system, use distutils -- "python setup.py

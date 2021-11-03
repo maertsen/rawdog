@@ -1,5 +1,6 @@
 # plugins: handle add-on modules for rawdog.
-# Copyright 2004, 2005, 2013, 2016 Adam Sampson <ats@offog.org>
+#  Copyright 2004, 2005, 2013, 2016 Adam Sampson <ats@offog.org>
+#  Copyright 2021 Maarten Aertsen <spam-github@rtsn.nl>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,10 +19,11 @@
 # Vellum weblog system:
 #   http://www.kryogenix.org/code/vellum/
 
+from builtins import object
 import imp
 import os
 
-class Box:
+class Box(object):
 	"""Utility class that holds a mutable value. Useful for passing
 	immutable types by reference."""
 	def __init__(self, value=None):

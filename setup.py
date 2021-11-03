@@ -3,7 +3,7 @@
 from distutils.core import setup
 import sys
 
-if sys.version_info < (2, 7) or sys.version_info >= (3,):
+if sys.version_info < (2, 7):
 	print("rawdog requires Python 2.7 or later.")
 	sys.exit(1)
 
